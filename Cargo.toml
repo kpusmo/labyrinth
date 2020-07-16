@@ -1,0 +1,11 @@
+[package]
+name = "labyrinth"
+version = "0.1.0"
+authors = ["kpusmo <smolarkiewicz@nonstop.co>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+args = "2.2.0"
+getopts = "0.2.21"
