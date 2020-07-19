@@ -2,8 +2,7 @@ use args::Args;
 use std::env;
 use std::error::Error;
 use getopts::Occur;
-
-mod labyrinth;
+use labyrinth::{solve_labyrinth, solve_binary};
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
@@ -15,9 +14,19 @@ fn main() -> Result<()> {
     }
     let input_path: String = args.value_of("path")?;
     if args.value_of("binary")? {
-        todo!("binary mode");
+        match solve_binary(&input_path) {
+            Ok(results) => {
+                for r in results {
+                    println!("{}", r);
+                }
+            },
+            Err(error) => println!("Error: {}", error.to_string())
+        }
     } else {
-        labyrinth::solve(&input_path);
+        match solve_labyrinth(&input_path) {
+            Ok(turns) => println!("{}", turns),
+            Err(error) => println!("Error: {}", error.to_string())
+        }
     }
     Ok(())
 }
@@ -31,7 +40,7 @@ fn parse_args(raw_args: env::Args) -> Result<Args> {
                 "Input file path",
                 "PATH",
                 Occur::Optional,
-                Some("input/sample.in".to_owned()),
+                Some("input/sample-1.in".to_owned()),
     );
     args.parse(raw_args)?;
     Ok(args)
