@@ -10,7 +10,7 @@ pub struct Node {
 }
 
 impl Node {
-    fn from_char(char: &str) -> Node {
+    fn from_str_char(char: &str) -> Node {
         Node {
             digit: char.parse().unwrap_or(0),
             visited: false,
@@ -30,12 +30,7 @@ enum Direction {
     RIGHT,
 }
 
-pub struct Labyrinth {
-    rows: Vec<Row>,
-    size: Vector2d,
-}
-
-#[derive(Eq, Debug)]
+#[derive(Debug)]
 pub struct Vector2d {
     x: usize,
     y: usize,
@@ -43,8 +38,8 @@ pub struct Vector2d {
 
 impl Vector2d {
     fn get_direction(&self, to: &Vector2d) -> Direction {
-        let x = to.x as i64 - self.x as i64;
-        let y = to.y as i64 - self.y as i64;
+        let x = to.x as i32 - self.x as i32;
+        let y = to.y as i32 - self.y as i32;
         if (x != 0 && y != 0) || (x == 0 && y == 0) {
             panic!("at the disco");
         }
@@ -57,12 +52,6 @@ impl Vector2d {
         } else {
             Direction::DOWN
         }
-    }
-}
-
-impl PartialEq for Vector2d {
-    fn eq(&self, other: &Vector2d) -> bool {
-        self.x == other.x && self.y == other.y
     }
 }
 
@@ -91,13 +80,15 @@ impl State {
         State {
             turns: 0,
             current_result: None,
-            // zakładam, że pierwszy ruch jest zawsze w prawo,
-            // czyli, zakładam, że oprócz wejścia i wyjścia z labiryntu
-            // wszystkie znaki na granicach planszy to zera
-            // todo kierunek musi być Option jeżeli to nie prawda
+            // first move is always to the right, as there are no path nodes on the edges of the labyrinth
             direction: Direction::RIGHT,
         }
     }
+}
+
+pub struct Labyrinth {
+    rows: Vec<Row>,
+    size: Vector2d,
 }
 
 impl Labyrinth {
@@ -116,7 +107,7 @@ impl Labyrinth {
             .map(|line| {
                 line.split("")
                     .filter(|char| !char.trim().is_empty())
-                    .map(|char| Node::from_char(char))
+                    .map(|char| Node::from_str_char(char))
                     .collect()
             })
             .collect();
@@ -188,7 +179,6 @@ impl Labyrinth {
             (Some(coords.x + 1), Some(coords.y)),
             (Some(coords.x), Some(coords.y + 1)),
         ].iter()
-            // todo filter jeśli ściany mogą mieć jedynki
             .filter(|c| c.0.is_some() && c.1.is_some())
             .map(|c| Vector2d::from((c.0.unwrap(), c.1.unwrap())))
             .filter(|c| !self.rows[c.y][c.x].visited && self.rows[c.y][c.x].is_path())

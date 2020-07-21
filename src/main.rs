@@ -32,12 +32,12 @@ fn main() -> Result<()> {
 }
 
 fn parse_args(raw_args: env::Args) -> Result<Args> {
-    let mut args = Args::new("labirynth", "Finds a way out from a labyrinth");
+    let mut args = Args::new("labyrinth", "Finds a way out from a labyrinth, or converts binary numbers to decimal");
     args.flag("h", "help", "Prints this message");
     args.flag("b", "binary", "Binary calc mode");
     args.option("p",
                 "path",
-                "Input file path",
+                "Input file path; defaults to 'input/sample-1.in'",
                 "PATH",
                 Occur::Optional,
                 Some("input/sample-1.in".to_owned()),
